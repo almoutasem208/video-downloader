@@ -7,18 +7,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip setuptools
+          pip install "cython<3.0.0" buildozer
 
       - name: Build with Buildozer
-        uses: ArtemSundarev/buildozer-action@v1.2
-        with:
-          command: buildozer -v android debug
-          submodules: false
+        run: buildozer -v android debug
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: bin/*.apk
